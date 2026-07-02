@@ -12,11 +12,11 @@ import {
   getLastDetection,
   getOpenShift,
   saveDoctorProfile,
-  saveShift
+  saveShift,
 } from "@/lib/storage/shifts-storage";
 import {
   addHoursToDatetimeLocal,
-  nowForDatetimeInput
+  nowForDatetimeInput,
 } from "@/lib/time/datetime";
 import type { HospitalDetection, Shift } from "@/types/shift";
 
@@ -28,7 +28,30 @@ const sectorOptions = [
   "Clínica Médica",
   "Pediatria",
   "Obstetrícia",
-  "Outro"
+  "Outro",
+];
+
+const plannedHoursOptions = [
+  {
+    value: "6",
+    label: "6 horas",
+  },
+  {
+    value: "12",
+    label: "12 horas",
+  },
+  {
+    value: "24",
+    label: "24 horas",
+  },
+  {
+    value: "36",
+    label: "36 horas",
+  },
+  {
+    value: "48",
+    label: "48 horas",
+  },
 ];
 
 export default function NovoPlantaoPage() {
@@ -77,12 +100,16 @@ export default function NovoPlantaoPage() {
     setErrorMessage("");
 
     if (!detection) {
-      setErrorMessage("Antes de registrar o plantão, faça a detecção de chegada.");
+      setErrorMessage(
+        "Antes de registrar o plantão, faça a detecção de chegada."
+      );
       return;
     }
 
     if (openShift) {
-      setErrorMessage("Já existe um plantão em aberto. Finalize antes de iniciar outro.");
+      setErrorMessage(
+        "Já existe um plantão em aberto. Finalize antes de iniciar outro."
+      );
       return;
     }
 
@@ -155,12 +182,12 @@ export default function NovoPlantaoPage() {
       notes,
 
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     saveDoctorProfile({
       doctorName: doctorName.trim(),
-      doctorCrm: doctorCrm.trim()
+      doctorCrm: doctorCrm.trim(),
     });
 
     saveShift(newShift);
@@ -184,7 +211,9 @@ export default function NovoPlantaoPage() {
 
         {!detection && (
           <Card className="mb-4 border border-amber-200 bg-amber-50">
-            <p className="font-bold text-amber-950">Chegada ainda não detectada</p>
+            <p className="font-bold text-amber-950">
+              Chegada ainda não detectada
+            </p>
             <p className="mt-1 text-sm leading-6 text-amber-900">
               Volte para a tela de GPS e confirme sua chegada ao hospital antes
               de registrar o plantão.
@@ -279,9 +308,11 @@ export default function NovoPlantaoPage() {
                 onChange={(event) => setPlannedHours(event.target.value)}
                 className="rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-950 outline-none focus:border-teal-600"
               >
-                <option value="6">6 horas</option>
-                <option value="12">12 horas</option>
-                <option value="24">24 horas</option>
+                {plannedHoursOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -328,7 +359,10 @@ export default function NovoPlantaoPage() {
               </div>
             )}
 
-            <Button onClick={handleSubmit} disabled={!detection || Boolean(openShift)}>
+            <Button
+              onClick={handleSubmit}
+              disabled={!detection || Boolean(openShift)}
+            >
               Salvar e iniciar plantão
             </Button>
           </div>
